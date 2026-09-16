@@ -3,6 +3,11 @@ import 'reflect-metadata'
 
 import Fastify from 'fastify'
 
+import { createAccountRoute } from './modules/account/create-account/create-account.route'
+import { getAccountsRoute } from './modules/account/get-accounts/get-accounts.route'
+import { updateAccountRoute } from './modules/account/update-account/update-account.route'
+import { getAccountRoute } from './modules/account/get-account/get-account.route'
+
 import { createUserRoute } from './modules/user/create-user/create-user.route'
 import { getUserRoute } from './modules/user/get-user/get-user.route'
 import { loginUserRoute } from './modules/user/login-user/login-user.route'
@@ -29,6 +34,14 @@ const start = async () => {
     await app.register(errorHandlerPlugin)
 
     // API routes
+
+    // Account routes
+    await app.register(createAccountRoute, { prefix: '/api' })
+    await app.register(getAccountsRoute, { prefix: '/api' })
+    await app.register(getAccountRoute, { prefix: '/api' })
+    await app.register(updateAccountRoute, { prefix: '/api' })
+
+    // User routes
     await app.register(createUserRoute, { prefix: '/api' })
     await app.register(loginUserRoute, { prefix: '/api' })
     await app.register(logoutUserRoute, { prefix: '/api' })

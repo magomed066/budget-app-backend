@@ -135,3 +135,77 @@ curl -X PATCH http://localhost:3000/api/auth/update \
 
 You can update `email`, `firstName`, `lastName`, and `phone`. Sending `null` for
 `phone` clears it. An email already used by another account returns HTTP 409.
+
+## Accounts
+
+Apply migrations with `npm run migration:run` before using the account endpoints.
+Accounts currently support `cash` and `bank` types and RUB currency. Opening
+balances are integer kopecks: `100000` means 1,000 RUB. Negative balances are
+allowed; the supported range is -2147483648 through 2147483647 kopecks.
+
+Create an account with `POST /api/accounts`:
+
+```sh
+curl -X POST http://localhost:3000/api/accounts \
+  -H 'authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'content-type: application/json' \
+  -d '{"name":"Cash","type":"cash","currency":"RUB","openingBalanceMinor":100000}'
+```
+
+A successful request returns HTTP 201 and `{ "success": true, "data": {...} }`.
+The account owner comes from the access token, never from the request body.
+Names are trimmed and must contain a non-whitespace character.
+
+List the authenticated user's accounts, newest first, with `GET /api/accounts`:
+
+```sh
+curl http://localhost:3000/api/accounts \
+  -H 'authorization: Bearer YOUR_ACCESS_TOKEN'
+```
+
+This returns HTTP 200 and `{ "success": true, "data": [...] }`, with an empty
+array when the user has no accounts. Both routes require an active session.
+
+Run account route tests (using an in-memory repository substitute) with:
+
+```sh
+npm run build
+node --test tests/accounts.test.cjs
+```
+
+### Get one account
+
+Use `GET /api/accounts/:id` to retrieve an account owned by the authenticated user:
+
+```sh
+curl http://localhost:3000/api/accounts/1 \
+  -H 'authorization: Bearer YOUR_ACCESS_TOKEN'
+```
+
+Returns HTTP 200 with `{ "success": true, "data": {...} }`, using the same
+account fields as creation and listing. The ID must be a positive integer no
+greater than 2147483647; invalid IDs return HTTP 400. Missing accounts and
+accounts belonging to another user both return HTTP 404. A missing, invalid,
+or revoked access token returns HTTP 401 for a valid account ID.
+
+### Update an account
+
+Use `PATCH /api/accounts/:id` with one or more of `name`, `type`, and
+`openingBalanceMinor`. Omitted fields remain unchanged. Names are trimmed;
+opening balances use integer kopecks and may be zero or negative within the
+same range as account creation. Currency remains RUB.
+
+```sh
+curl -X PATCH http://localhost:3000/api/accounts/1 \
+  -H 'authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'content-type: application/json' \
+  -d '{"name":"Wallet","openingBalanceMinor":150000}'
+```
+
+Returns HTTP 200 with `{ "success": true, "data": {...} }` containing the updated
+account. Invalid IDs, empty updates, and invalid field values return HTTP 400.
+Missing accounts and other users' accounts return the same HTTP 404 response.
+Authentication is required. Owner, ID, currency, and timestamps cannot be
+changed through this endpoint; extra fields are ignored, and at least one
+editable field must be supplied. Editing the opening balance corrects the
+initial amount; it does not record income or an expense.
