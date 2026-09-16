@@ -8,6 +8,7 @@ import { getUserRoute } from './modules/user/get-user/get-user.route'
 import { loginUserRoute } from './modules/user/login-user/login-user.route'
 import { logoutUserRoute } from './modules/user/logout-user/logout-user.route'
 import { refreshTokenRoute } from './modules/user/refresh-token/refresh-token.route'
+import { updateUserRoute } from './modules/user/update-user/update-user.route'
 import { databasePlugin } from './plugins/database'
 import { errorHandlerPlugin } from './plugins/error-handler'
 
@@ -33,6 +34,7 @@ const start = async () => {
     await app.register(logoutUserRoute, { prefix: '/api' })
     await app.register(refreshTokenRoute, { prefix: '/api' })
     await app.register(getUserRoute, { prefix: '/api' })
+    await app.register(updateUserRoute, { prefix: '/api' })
 
     await app.listen({ port, host: '0.0.0.0' })
   } catch (error) {

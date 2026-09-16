@@ -74,8 +74,8 @@ Invalid credentials return HTTP 401 without revealing whether the email exists.
 
 ## Refresh tokens
 
-Send the refresh token returned by registration, login, or a previous refresh
-to `POST /api/auth/refresh`:
+Send the refresh token returned by registration, login, or a previous refresh to
+`POST /api/auth/refresh`:
 
 ```sh
 curl -X POST http://localhost:3000/api/auth/refresh \
@@ -110,10 +110,28 @@ session.
 Send a `GET` request with the access token returned by the login endpoint:
 
 ```sh
-curl http://localhost:3000/api/users/me \
+curl http://localhost:3000/api/auth/me \
   -H 'authorization: Bearer YOUR_ACCESS_TOKEN'
 ```
 
 The response contains the authenticated user's profile without the password
 hash. A missing user returns HTTP 404. A missing, expired, or invalid access
 token returns HTTP 401. Registration and login remain public endpoints.
+
+## Update your profile
+
+Send the profile fields you want to change to `PATCH /api/users/me`. The user is
+identified by the access token, so a user ID is not accepted in the URL or body.
+
+```sh
+curl -X PATCH http://localhost:3000/api/auth/update \
+  -H 'authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'content-type: application/json' \
+  -d '{
+    "firstName": "Janet",
+    "phone": null
+  }'
+```
+
+You can update `email`, `firstName`, `lastName`, and `phone`. Sending `null` for
+`phone` clears it. An email already used by another account returns HTTP 409.
