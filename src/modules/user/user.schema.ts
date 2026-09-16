@@ -24,7 +24,7 @@ export class User {
   password!: string
 
   @Column({ type: 'varchar', length: 100, nullable: true })
-  phone!: string
+  phone!: string | null
 
   @CreateDateColumn({ type: 'timestamptz', name: 'created_at' })
   createdAt!: Date

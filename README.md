@@ -105,16 +105,15 @@ the logged-out access token, or a missing, expired, or invalid token, returns
 HTTP 401. Other devices remain signed in because each token pair has its own
 session.
 
-## Get a user profile
+## Get your profile
 
-Send a `GET` request with the user's numeric ID and the access token returned by
-the login endpoint:
+Send a `GET` request with the access token returned by the login endpoint:
 
 ```sh
-curl http://localhost:3000/api/users/1 \
+curl http://localhost:3000/api/users/me \
   -H 'authorization: Bearer YOUR_ACCESS_TOKEN'
 ```
 
-The response contains the user's profile without the password hash. A missing
-user returns HTTP 404. A missing, expired, or invalid access token returns HTTP
-401. Registration and login remain public endpoints.
+The response contains the authenticated user's profile without the password
+hash. A missing user returns HTTP 404. A missing, expired, or invalid access
+token returns HTTP 401. Registration and login remain public endpoints.
