@@ -209,3 +209,42 @@ Authentication is required. Owner, ID, currency, and timestamps cannot be
 changed through this endpoint; extra fields are ignored, and at least one
 editable field must be supplied. Editing the opening balance corrects the
 initial amount; it does not record income or an expense.
+
+## Categories
+
+Apply the new migration with `npm run migration:run` before using categories.
+Each category belongs to the authenticated user and has a `name` (1–100
+characters) and a `type` (`income` or `expense`). Names are trimmed and cannot
+be blank. Duplicate names are allowed.
+
+Create a category with `POST /api/categories`:
+
+```sh
+curl -X POST http://localhost:3000/api/categories \
+  -H 'authorization: Bearer YOUR_ACCESS_TOKEN' \
+  -H 'content-type: application/json' \
+  -d '{"name":"Groceries","type":"expense"}'
+```
+
+The response is HTTP 201 with `{ "success": true, "data": {...} }`. Public
+category fields are `id`, `name`, `type`, `createdAt`, and `updatedAt`.
+
+- `GET /api/categories` returns your categories, newest first, or an empty array.
+- `GET /api/categories/:id` returns one of your categories.
+- `PATCH /api/categories/:id` updates `name`, `type`, or both. Omitted fields
+  remain unchanged.
+- `DELETE /api/categories/:id` permanently deletes one of your categories and
+  returns HTTP 204 with no response body. Deleting it again returns HTTP 404.
+
+All endpoints require an active access token. Missing categories and categories
+owned by another user both return HTTP 404. IDs must be positive integers up to
+2147483647. Invalid input and empty updates return HTTP 400. Owner, ID, and
+timestamps cannot be set through these endpoints; extra fields are ignored.
+Categories are standalone for now; no transaction associations are created.
+
+Run account and category route tests with an in-memory repository substitute:
+
+```sh
+npm run build
+node --test tests/*.test.cjs
+```
