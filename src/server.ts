@@ -8,6 +8,12 @@ import { getAccountsRoute } from './modules/account/get-accounts/get-accounts.ro
 import { updateAccountRoute } from './modules/account/update-account/update-account.route'
 import { getAccountRoute } from './modules/account/get-account/get-account.route'
 
+import { createCategoryRoute } from './modules/category/create-category/create-category.route'
+import { deleteCategoryRoute } from './modules/category/delete-category/delete-category.route'
+import { getCategoriesRoute } from './modules/category/get-categories/get-categories.route'
+import { getCategoryRoute } from './modules/category/get-category/get-category.route'
+import { updateCategoryRoute } from './modules/category/update-category/update-category.route'
+
 import { createUserRoute } from './modules/user/create-user/create-user.route'
 import { getUserRoute } from './modules/user/get-user/get-user.route'
 import { loginUserRoute } from './modules/user/login-user/login-user.route'
@@ -40,6 +46,13 @@ const start = async () => {
     await app.register(getAccountsRoute, { prefix: '/api' })
     await app.register(getAccountRoute, { prefix: '/api' })
     await app.register(updateAccountRoute, { prefix: '/api' })
+
+    // Category routes
+    await app.register(createCategoryRoute, { prefix: '/api' })
+    await app.register(getCategoriesRoute, { prefix: '/api' })
+    await app.register(getCategoryRoute, { prefix: '/api' })
+    await app.register(updateCategoryRoute, { prefix: '/api' })
+    await app.register(deleteCategoryRoute, { prefix: '/api' })
 
     // User routes
     await app.register(createUserRoute, { prefix: '/api' })
