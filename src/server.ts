@@ -2,6 +2,7 @@ import 'dotenv/config'
 import 'reflect-metadata'
 
 import Fastify from 'fastify'
+import { transactionRoutes } from './modules/transaction/transaction.route'
 
 import { createAccountRoute } from './modules/account/create-account/create-account.route'
 import { getAccountsRoute } from './modules/account/get-accounts/get-accounts.route'
@@ -53,6 +54,8 @@ const start = async () => {
     await app.register(getCategoryRoute, { prefix: '/api' })
     await app.register(updateCategoryRoute, { prefix: '/api' })
     await app.register(deleteCategoryRoute, { prefix: '/api' })
+
+    await app.register(transactionRoutes, { prefix: '/api' })
 
     // User routes
     await app.register(createUserRoute, { prefix: '/api' })

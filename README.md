@@ -240,7 +240,11 @@ All endpoints require an active access token. Missing categories and categories
 owned by another user both return HTTP 404. IDs must be positive integers up to
 2147483647. Invalid input and empty updates return HTTP 400. Owner, ID, and
 timestamps cannot be set through these endpoints; extra fields are ignored.
-Categories are standalone for now; no transaction associations are created.
+`GET /api/transactions` and `GET /api/transactions/:id` include nested `account`
+and `category` objects alongside `accountId` and `categoryId`. These objects use
+the same public fields as the account and category endpoints, including names,
+types, timestamps, and account currency and opening balance. List filtering and
+pagination still apply. Create and update responses contain transaction fields only.
 
 Run account and category route tests with an in-memory repository substitute:
 
