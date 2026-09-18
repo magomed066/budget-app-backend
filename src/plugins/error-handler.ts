@@ -1,4 +1,5 @@
 import fastifyPlugin from 'fastify-plugin'
+import { QueryFailedError } from 'typeorm'
 import { FastifySchemaValidationError } from 'fastify'
 
 import { HTTP_STATUS } from '../shared/constants/http-status'
@@ -17,6 +18,15 @@ const normalizeError = (error: unknown): RequestError =>
 const errorHandlerPlugin = fastifyPlugin(
   async (app) => {
     app.setErrorHandler((error, request, reply) => {
+      if (error instanceof QueryFailedError && error.driverError.code === '23503' &&
+        ['FK_transactions_account_owner', 'FK_transactions_category_owner_type'].includes(error.driverError.constraint)) {
+        return reply.code(HTTP_STATUS.CONFLICT).send({
+          success: false,
+          statusCode: HTTP_STATUS.CONFLICT,
+          errors: ['Transaction references must remain valid. Referenced categories cannot be deleted or have their type changed.']
+        })
+      }
+
       if (error instanceof AppError) {
         const response: ErrorResponse = {
           success: false,

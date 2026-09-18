@@ -1,4 +1,5 @@
 import {
+  Unique,
   Column,
   CreateDateColumn,
   Entity,
@@ -11,6 +12,7 @@ import {
 import { User } from '../user/user.schema'
 
 @Entity({ name: 'categories' })
+@Unique('UQ_categories_id_user_type', ['id', 'userId', 'type'])
 export class Category {
   @PrimaryGeneratedColumn()
   id!: number
